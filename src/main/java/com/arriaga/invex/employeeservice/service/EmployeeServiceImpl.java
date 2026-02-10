@@ -17,20 +17,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee create(Employee employee) {
-    if (employee.getActive() == null) {
-      employee.setActive(Boolean.TRUE);
-    }
-    trimFields(employee);
-    return repository.save(employee);
+    Employee normalized = normalizeForCreate(employee);
+    return repository.save(normalized);
   }
 
   @Override
   public List<Employee> createAll(List<Employee> employees) {
     for (Employee employee : employees) {
-      if (employee.getActive() == null) {
-        employee.setActive(Boolean.TRUE);
-      }
-      trimFields(employee);
+      normalizeForCreate(employee);
     }
     return repository.saveAll(employees);
   }
@@ -52,34 +46,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     if (updates == null) {
       return existing;
     }
-    if (updates.getFirstName() != null) {
-      existing.setFirstName(updates.getFirstName());
-    }
-    if (updates.getMiddleName() != null) {
-      existing.setMiddleName(updates.getMiddleName());
-    }
-    if (updates.getLastName() != null) {
-      existing.setLastName(updates.getLastName());
-    }
-    if (updates.getSecondLastName() != null) {
-      existing.setSecondLastName(updates.getSecondLastName());
-    }
-    if (updates.getAge() != null) {
-      existing.setAge(updates.getAge());
-    }
-    if (updates.getSex() != null) {
-      existing.setSex(updates.getSex());
-    }
-    if (updates.getBirthDate() != null) {
-      existing.setBirthDate(updates.getBirthDate());
-    }
-    if (updates.getPosition() != null) {
-      existing.setPosition(updates.getPosition());
-    }
-    if (updates.getActive() != null) {
-      existing.setActive(updates.getActive());
-    }
-    trimFields(existing);
+    applyUpdates(existing, updates);
+    normalizeNames(existing);
     return repository.save(existing);
   }
 
@@ -88,13 +56,51 @@ public class EmployeeServiceImpl implements EmployeeService {
     repository.deleteById(id);
   }
 
-  private void trimFields(Employee employee) {
+  private Employee normalizeForCreate(Employee employee) {
+    if (employee.getActive() == null) {
+      employee.setActive(Boolean.TRUE);
+    }
+    normalizeNames(employee);
+    return employee;
+  }
+
+  private void normalizeNames(Employee employee) {
     employee.setFirstName(trim(employee.getFirstName()));
     employee.setMiddleName(trim(employee.getMiddleName()));
     employee.setLastName(trim(employee.getLastName()));
     employee.setSecondLastName(trim(employee.getSecondLastName()));
     employee.setSex(trim(employee.getSex()));
     employee.setPosition(trim(employee.getPosition()));
+  }
+
+  private void applyUpdates(Employee target, Employee updates) {
+    if (updates.getFirstName() != null) {
+      target.setFirstName(updates.getFirstName());
+    }
+    if (updates.getMiddleName() != null) {
+      target.setMiddleName(updates.getMiddleName());
+    }
+    if (updates.getLastName() != null) {
+      target.setLastName(updates.getLastName());
+    }
+    if (updates.getSecondLastName() != null) {
+      target.setSecondLastName(updates.getSecondLastName());
+    }
+    if (updates.getAge() != null) {
+      target.setAge(updates.getAge());
+    }
+    if (updates.getSex() != null) {
+      target.setSex(updates.getSex());
+    }
+    if (updates.getBirthDate() != null) {
+      target.setBirthDate(updates.getBirthDate());
+    }
+    if (updates.getPosition() != null) {
+      target.setPosition(updates.getPosition());
+    }
+    if (updates.getActive() != null) {
+      target.setActive(updates.getActive());
+    }
   }
 
   private String trim(String value) {
