@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: employee-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [${spring.application.name}] [corr=%X{correlationId}] %logger{36} - %msg%n"
