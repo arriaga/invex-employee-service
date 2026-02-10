@@ -47,7 +47,7 @@ class ModelCoverageTest {
   }
 
   @Test
-  void coversDtoModels() {
+  void coversEmployeeCreateRequest() {
     EmployeeCreateRequest createRequest = new EmployeeCreateRequest();
     createRequest.setFirstName("Ana");
     createRequest.setMiddleName("Maria");
@@ -68,7 +68,10 @@ class ModelCoverageTest {
     assertThat(createRequest.getBirthDate()).isEqualTo(LocalDate.of(1994, 2, 10));
     assertThat(createRequest.getPosition()).isEqualTo("Engineer");
     assertThat(createRequest.getActive()).isTrue();
+  }
 
+  @Test
+  void coversEmployeeUpdateRequest() {
     EmployeeUpdateRequest updateRequest = new EmployeeUpdateRequest();
     updateRequest.setFirstName("Ana");
     updateRequest.setMiddleName("Maria");
@@ -89,7 +92,10 @@ class ModelCoverageTest {
     assertThat(updateRequest.getBirthDate()).isEqualTo(LocalDate.of(1994, 2, 10));
     assertThat(updateRequest.getPosition()).isEqualTo("Engineer");
     assertThat(updateRequest.getActive()).isTrue();
+  }
 
+  @Test
+  void coversEmployeeResponse() {
     EmployeeResponse response = new EmployeeResponse();
     response.setId(1L);
     response.setFirstName("Ana");
@@ -114,7 +120,10 @@ class ModelCoverageTest {
     assertThat(response.getPosition()).isEqualTo("Engineer");
     assertThat(response.getCreatedAt()).isEqualTo(Instant.parse("2026-02-10T12:00:00Z"));
     assertThat(response.getActive()).isTrue();
+  }
 
+  @Test
+  void coversTokenModels() {
     TokenRequest tokenRequest = new TokenRequest();
     tokenRequest.setSubject("tester");
     tokenRequest.setScopes(List.of("employee.read"));
