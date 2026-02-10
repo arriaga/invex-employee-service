@@ -165,12 +165,17 @@ curl -X DELETE "$BASE_URL/employees/1" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-## CI/CD
+## DevSecOps
 
-GitHub Actions:
+### GitHub Actions
 
-- CI: build + tests + dependency scanning.
-- CodeQL: analisis SAST semanal y en PRs.
+- CI: compila el proyecto, ejecuta pruebas y analiza dependencias.
+- CodeQL: ejecuta analisis SAST semanal y en PRs para detectar vulnerabilidades.
+
+### Evidencias de pipelines
+
+![CI Pipeline](docs/images/ci1.png)
+![CodeQL Pipeline](docs/images/ci2.png)
 
 ## Evidencias
 
