@@ -131,3 +131,7 @@ GitHub Actions:
 ### SonarQube
 
 ![SonarQube](docs/images/sonar.png)
+
+### OpenAPI
+
+![OpenAPI](docs/images/oas.png)
