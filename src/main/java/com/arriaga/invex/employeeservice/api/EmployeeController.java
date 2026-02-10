@@ -28,9 +28,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/employees")
+@Tag(name = "Employees", description = "Employee management endpoints")
 public class EmployeeController {
 
   private final EmployeeService employeeService;
@@ -47,6 +55,10 @@ public class EmployeeController {
   }
 
   @GetMapping
+  @Operation(summary = "List employees", description = "Returns all employees")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Employees returned")
+  })
   public List<EmployeeResponse> getAllEmployees() {
     return employeeService.findAll().stream()
         .map(EmployeeMapper::toResponse)
@@ -54,12 +66,25 @@ public class EmployeeController {
   }
 
   @GetMapping("/{id}")
+  @Operation(summary = "Get employee by ID", description = "Returns an employee by ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Employee returned"),
+      @ApiResponse(responseCode = "404", description = "Employee not found",
+          content = @Content(schema = @Schema(implementation = com.arriaga.invex.employeeservice.exception.ApiErrorResponse.class)))
+  })
   public EmployeeResponse getEmployeeById(@PathVariable Long id) {
     Employee employee = employeeService.getById(id);
     return EmployeeMapper.toResponse(employee);
   }
 
   @PostMapping
+  @Operation(summary = "Create employees", description = "Accepts a single employee object or an array of employees")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Employees created"),
+      @ApiResponse(responseCode = "400", description = "Invalid request"),
+      @ApiResponse(responseCode = "422", description = "Validation error",
+          content = @Content(schema = @Schema(implementation = com.arriaga.invex.employeeservice.exception.ApiErrorResponse.class)))
+  })
   public ResponseEntity<List<EmployeeResponse>> createEmployees(
       @RequestBody JsonNode requestBody) {
     List<EmployeeCreateRequest> requests = parseCreateRequests(requestBody);
@@ -91,6 +116,14 @@ public class EmployeeController {
   }
 
   @PutMapping("/{id}")
+  @Operation(summary = "Update employee", description = "Updates provided employee fields")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Employee updated"),
+      @ApiResponse(responseCode = "404", description = "Employee not found",
+          content = @Content(schema = @Schema(implementation = com.arriaga.invex.employeeservice.exception.ApiErrorResponse.class))),
+      @ApiResponse(responseCode = "422", description = "Validation error",
+          content = @Content(schema = @Schema(implementation = com.arriaga.invex.employeeservice.exception.ApiErrorResponse.class)))
+  })
   public EmployeeResponse updateEmployee(
       @PathVariable Long id,
       @Valid @RequestBody EmployeeUpdateRequest request) {
@@ -110,13 +143,25 @@ public class EmployeeController {
   }
 
   @DeleteMapping("/{id}")
+  @Operation(summary = "Delete employee", description = "Deletes an employee by ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Employee deleted"),
+      @ApiResponse(responseCode = "404", description = "Employee not found",
+          content = @Content(schema = @Schema(implementation = com.arriaga.invex.employeeservice.exception.ApiErrorResponse.class)))
+  })
   public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
     employeeService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/search")
-  public List<EmployeeResponse> searchEmployeesByName(@RequestParam("name") String name) {
+  @Operation(summary = "Search employees", description = "Performs case-insensitive partial match across name fields")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Employees returned")
+  })
+  public List<EmployeeResponse> searchEmployeesByName(
+      @Parameter(description = "Name fragment to search", required = true)
+      @RequestParam("name") String name) {
     String normalized = name == null ? "" : name.trim().toLowerCase();
     List<EmployeeResponse> responses = new ArrayList<>();
     for (Employee employee : employeeService.findAll()) {
