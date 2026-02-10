@@ -115,6 +115,56 @@ TOKEN="<jwt>"
 curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/employees
 ```
 
+### Coleccion Postman
+
+Archivos en el repo:
+
+- `postman/employee-service.postman_collection.json`
+- `postman/employee-service.postman_environment.json`
+
+Importa ambos en Postman y ajusta la variable `baseUrl` segun tu entorno.
+
+### Curls de operaciones
+
+```bash
+BASE_URL="http://localhost:8080"
+TOKEN="<jwt>"
+
+# Listar empleados
+curl -H "Authorization: Bearer $TOKEN" "$BASE_URL/employees"
+
+# Obtener empleado por id
+curl -H "Authorization: Bearer $TOKEN" "$BASE_URL/employees/1"
+
+# Buscar empleados por nombre
+curl -H "Authorization: Bearer $TOKEN" "$BASE_URL/employees/search?name=ana"
+
+# Crear empleado (single)
+curl -X POST "$BASE_URL/employees" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Ana","lastName":"Ruiz","age":30,"sex":"F","birthDate":"1994-02-10","position":"Engineer","active":true}'
+
+# Crear empleados (batch)
+curl -X POST "$BASE_URL/employees" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {"firstName":"Ana","lastName":"Ruiz","age":30,"sex":"F","birthDate":"1994-02-10","position":"Engineer","active":true},
+    {"firstName":"Luis","lastName":"Diaz","age":28,"sex":"M","birthDate":"1996-01-15","position":"Analyst","active":true}
+  ]'
+
+# Actualizar empleado
+curl -X PUT "$BASE_URL/employees/1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"position":"Senior Engineer","active":true}'
+
+# Eliminar empleado
+curl -X DELETE "$BASE_URL/employees/1" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 ## CI/CD
 
 GitHub Actions:
