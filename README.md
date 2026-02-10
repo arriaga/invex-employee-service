@@ -22,6 +22,15 @@ mvn clean test
 curl http://localhost:8080/actuator/health
 ```
 
+## Build a container image
+
+Build the application JAR first, then build the image:
+
+```bash
+mvn clean package
+docker build -t employee-service:local .
+```
+
 ## API documentation
 
 Swagger UI is available once the application is running:
