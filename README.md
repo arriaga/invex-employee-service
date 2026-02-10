@@ -195,7 +195,7 @@ curl -X DELETE "$BASE_URL/employees/1" \
 
 ![Postman](docs/images/postman.png)
 
-## Diagramas de secuencia (Mermaid)
+## Diagramas de secuencia 
 
 ### GET /employees
 
