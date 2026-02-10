@@ -1,6 +1,11 @@
 spring:
   application:
     name: employee-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: ${JWT_SECRET:dev-local-secret-change-me}
 
 management:
   endpoints:
