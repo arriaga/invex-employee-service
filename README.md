@@ -135,3 +135,7 @@ GitHub Actions:
 ### OpenAPI
 
 ![OpenAPI](docs/images/oas.png)
+
+### Postman
+
+![Postman](docs/images/postman.png)
