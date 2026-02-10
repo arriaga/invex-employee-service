@@ -3,7 +3,6 @@ package com.arriaga.invex.employeeservice.exception;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class GlobalExceptionHandler {
       HttpServletRequest request) {
     List<String> details = ex.getBindingResult().getFieldErrors().stream()
         .map(this::formatFieldError)
-        .collect(Collectors.toList());
+        .toList();
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.VALIDATION_ERROR,
@@ -44,7 +43,7 @@ public class GlobalExceptionHandler {
       HttpServletRequest request) {
     List<String> details = ex.getConstraintViolations().stream()
         .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-        .collect(Collectors.toList());
+        .toList();
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.VALIDATION_ERROR,

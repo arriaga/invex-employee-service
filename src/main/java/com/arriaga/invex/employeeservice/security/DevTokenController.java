@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
@@ -31,11 +30,9 @@ public class DevTokenController {
   @PostMapping("/token")
   @Operation(summary = "Issue dev token", description = "Returns a local JWT for testing")
   @SecurityRequirements
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Token issued",
-          content = @Content(schema = @Schema(implementation = TokenResponse.class))),
-      @ApiResponse(responseCode = "422", description = "Validation error")
-  })
+  @ApiResponse(responseCode = "200", description = "Token issued",
+      content = @Content(schema = @Schema(implementation = TokenResponse.class)))
+  @ApiResponse(responseCode = "422", description = "Validation error")
   public TokenResponse issueToken(@Valid @RequestBody TokenRequest request) {
     return tokenService.issueToken(request);
   }
