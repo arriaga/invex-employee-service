@@ -5,7 +5,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          secret-key: ${JWT_SECRET:dev-local-secret-change-me}
+          secret-key: ${JWT_SECRET:dev-local-secret-change-me-32-bytes-min}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
 
 management:
   endpoints:

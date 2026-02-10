@@ -3,9 +3,10 @@ package com.arriaga.invex.employeeservice.exception;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
       MethodArgumentNotValidException ex,
       HttpServletRequest request) {
     List<String> details = ex.getBindingResult().getFieldErrors().stream()
         .map(this::formatFieldError)
-        .collect(Collectors.toList());
+        .toList();
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.VALIDATION_ERROR,
@@ -40,7 +43,7 @@ public class GlobalExceptionHandler {
       HttpServletRequest request) {
     List<String> details = ex.getConstraintViolations().stream()
         .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-        .collect(Collectors.toList());
+        .toList();
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.VALIDATION_ERROR,
@@ -101,6 +104,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleException(
       Exception ex,
       HttpServletRequest request) {
+    log.error(
+        "Unhandled exception for {} {} corr={}",
+        request.getMethod(),
+        request.getRequestURI(),
+        MDC.get("correlationId"),
+        ex);
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.INTERNAL_ERROR,
