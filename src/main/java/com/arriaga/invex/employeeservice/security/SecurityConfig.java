@@ -22,6 +22,7 @@ public class SecurityConfig {
             .requestMatchers(new AntPathRequestMatcher("/actuator/health", "GET")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**", "GET")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**", "GET")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/auth/token", "POST")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/employees", "GET")).hasAuthority("SCOPE_employee.read")
             .requestMatchers(new AntPathRequestMatcher("/employees/*", "GET")).hasAuthority("SCOPE_employee.read")
             .requestMatchers(new AntPathRequestMatcher("/employees/search", "GET")).hasAuthority("SCOPE_employee.read")
