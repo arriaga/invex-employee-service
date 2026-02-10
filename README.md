@@ -127,3 +127,7 @@ GitHub Actions:
 ### Gitflow
 
 ![Gitflow](docs/images/gitflow.png)
+
+### SonarQube
+
+![SonarQube](docs/images/sonar.png)
