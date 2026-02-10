@@ -176,6 +176,7 @@ curl -X DELETE "$BASE_URL/employees/1" \
 
 ![CI Pipeline](docs/images/ci1.png)
 ![CodeQL Pipeline](docs/images/ci2.png)
+![DevSecOps Pipeline](docs/images/ci3.png)
 
 ## Evidencias
 
