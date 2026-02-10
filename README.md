@@ -31,6 +31,12 @@ mvn clean package
 docker build -t employee-service:local .
 ```
 
+## CI/CD
+
+GitHub Actions:
+- CI workflow runs build and tests, plus dependency scanning.
+- CodeQL workflow runs weekly and on PRs for SAST.
+
 ## API documentation
 
 Swagger UI is available once the application is running:
