@@ -64,6 +64,16 @@ Protected endpoints:
 - GET /employees, GET /employees/{id}, GET /employees/search require SCOPE_employee.read
 - POST /employees, PUT /employees/{id}, DELETE /employees/{id} require SCOPE_employee.write
 
+### Dev token endpoint
+
+When running with the `dev` profile, you can request a local token:
+
+```bash
+curl -X POST http://localhost:8080/auth/token \
+  -H "Content-Type: application/json" \
+  -d '{"subject":"local-user","scopes":["employee.read","employee.write"],"expiresInMinutes":60}'
+```
+
 ### Local JWT generation
 
 Local validation uses an HMAC secret configured by `JWT_SECRET` (defaults to `dev-local-secret-change-me`).
