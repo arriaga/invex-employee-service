@@ -194,3 +194,148 @@ curl -X DELETE "$BASE_URL/employees/1" \
 ### Postman
 
 ![Postman](docs/images/postman.png)
+
+## Diagramas de secuencia (Mermaid)
+
+### GET /employees
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: GET /employees
+  API->>Service: findAll()
+  Service->>Repo: findAll()
+  Repo->>DB: SELECT employees
+  DB-->>Repo: rows
+  Repo-->>Service: employees
+  Service-->>API: employees
+  API-->>Client: 200 + list
+```
+
+### GET /employees/{id}
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: GET /employees/{id}
+  API->>Service: getById(id)
+  Service->>Repo: findById(id)
+  Repo->>DB: SELECT employee
+  DB-->>Repo: row/null
+  Repo-->>Service: employee/empty
+  Service-->>API: employee or throws
+  API-->>Client: 200 + employee / 404
+```
+
+### POST /employees
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: POST /employees (single or array)
+  API->>API: parse + validate
+  API->>Service: create/createAll
+  Service->>Repo: save/saveAll
+  Repo->>DB: INSERT employees
+  DB-->>Repo: ids
+  Repo-->>Service: saved
+  Service-->>API: saved
+  API-->>Client: 201 + location (single)
+```
+
+### PUT /employees/{id}
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: PUT /employees/{id}
+  API->>Service: updatePartial(id, updates)
+  Service->>Repo: findById(id)
+  Repo->>DB: SELECT employee
+  DB-->>Repo: row/null
+  Repo-->>Service: employee/empty
+  Service->>Repo: save(updated)
+  Repo->>DB: UPDATE employee
+  DB-->>Repo: ok
+  Repo-->>Service: updated
+  Service-->>API: updated
+  API-->>Client: 200 + employee / 404
+```
+
+### DELETE /employees/{id}
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: DELETE /employees/{id}
+  API->>Service: deleteById(id)
+  Service->>Repo: deleteById(id)
+  Repo->>DB: DELETE employee
+  DB-->>Repo: ok
+  Repo-->>Service: ok
+  Service-->>API: ok
+  API-->>Client: 204 / 404
+```
+
+### GET /employees/search?name=...
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as EmployeeController
+  participant Service as EmployeeService
+  participant Repo as EmployeeRepository
+  participant DB
+  Client->>API: GET /employees/search?name=...
+  API->>Service: findAll()
+  Service->>Repo: findAll()
+  Repo->>DB: SELECT employees
+  DB-->>Repo: rows
+  Repo-->>Service: employees
+  Service-->>API: employees
+  API->>API: filter by name
+  API-->>Client: 200 + list
+```
+
+### POST /auth/token (dev)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client
+  participant API as DevTokenController
+  participant Service as DevTokenService
+  participant Encoder as JwtEncoder
+  Client->>API: POST /auth/token
+  API->>Service: issueToken(request)
+  Service->>Encoder: encode(jwt)
+  Encoder-->>Service: token
+  Service-->>API: TokenResponse
+  API-->>Client: 200 + token
+```
