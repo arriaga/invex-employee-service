@@ -35,3 +35,39 @@ OpenAPI JSON:
 ```bash
 http://localhost:8080/v3/api-docs
 ```
+
+## Security
+
+This service uses JWT Bearer tokens as a Resource Server.
+
+Public endpoints:
+- GET /actuator/health
+- GET /v3/api-docs/**
+- GET /swagger-ui/**
+
+Protected endpoints:
+- GET /employees, GET /employees/{id}, GET /employees/search require SCOPE_employee.read
+- POST /employees, PUT /employees/{id}, DELETE /employees/{id} require SCOPE_employee.write
+
+### Local JWT generation
+
+Local validation uses an HMAC secret configured by `JWT_SECRET` (defaults to `dev-local-secret-change-me`).
+
+Example token generation (HS256) using Python:
+
+```bash
+python - <<'PY'
+import jwt
+import datetime
+
+secret = "dev-local-secret-change-me"
+now = datetime.datetime.utcnow()
+payload = {
+    "sub": "local-user",
+    "scope": "employee.read employee.write",
+    "iat": now,
+    "exp": now + datetime.timedelta(hours=1)
+}
+print(jwt.encode(payload, secret, algorithm="HS256"))
+PY
+```
