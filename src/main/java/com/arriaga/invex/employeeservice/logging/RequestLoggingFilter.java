@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
-  private static final Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
+  private static final Logger requestLogger = LoggerFactory.getLogger(RequestLoggingFilter.class);
   private static final String MASKED_VALUE = "[masked]";
 
   @Override
@@ -26,7 +26,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
     Map<String, String> headers = extractHeaders(request);
-    logger.info("Incoming request method={} path={} headers={}",
+    requestLogger.info("Incoming request method={} path={} headers={}",
         request.getMethod(),
         request.getRequestURI(),
         headers);

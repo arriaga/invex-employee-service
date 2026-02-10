@@ -50,10 +50,11 @@ class RequestLoggingFilterTest {
     assertThat(chainCalled).isTrue();
     assertThat(appender.list).hasSize(1);
     String message = appender.list.get(0).getFormattedMessage();
-    assertThat(message).contains("method=GET");
-    assertThat(message).contains("path=/employees");
-    assertThat(message).contains("Authorization=[masked]");
-    assertThat(message).contains("Cookie=[masked]");
-    assertThat(message).contains("X-Request-Id=req-1");
+    assertThat(message)
+        .contains("method=GET")
+        .contains("path=/employees")
+        .contains("Authorization=[masked]")
+        .contains("Cookie=[masked]")
+        .contains("X-Request-Id=req-1");
   }
 }
