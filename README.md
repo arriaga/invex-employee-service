@@ -1,45 +1,79 @@
 # Employee Service
 
-## Local setup
+Servicio REST para gestionar empleados, con JWT como Resource Server y migraciones automáticas con Flyway.
 
-### Start MySQL
+## Requisitos
+
+- Java 17
+- Maven 3.8+
+- Docker (para MySQL/Sonar local)
+
+## Instalacion rapida
+
+### 1) Levantar MySQL local
 ```bash
 docker compose up -d
 ```
 
-### Run the application with dev profile
+### 2) Ejecutar la aplicacion (perfil dev)
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-### Run tests
-```bash
-mvn clean test
-```
-
-### Verify health
+### 3) Verificar salud
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
-## Build a container image
+## Configuracion
 
-Build the application JAR first, then build the image:
+Variables comunes (valores por defecto en `application.yml`):
 
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `JWT_SECRET` (minimo 32 bytes para HS256)
+- `SERVER_PORT` (por defecto 8080)
+
+Perfiles:
+
+- `dev`: habilita el endpoint de token local.
+- `default`: pensado para entornos no locales.
+
+## Ejecucion
+
+### Ejecutar en modo desarrollo
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### Construir el JAR
 ```bash
 mvn clean package
+```
+
+### Construir imagen Docker
+```bash
 docker build -t employee-service:local .
 ```
 
-## CI/CD
+## Migraciones
 
-GitHub Actions:
-- CI workflow runs build and tests, plus dependency scanning.
-- CodeQL workflow runs weekly and on PRs for SAST.
+Flyway se ejecuta en el arranque y aplica los scripts en `src/main/resources/db/migration`.
 
-## API documentation
+## Pruebas
 
-Swagger UI is available once the application is running:
+```bash
+mvn test
+```
+
+Cobertura local:
+
+- Reporte HTML: `target/site/jacoco/index.html`
+
+## API y Swagger
+
+Swagger UI:
 
 ```bash
 http://localhost:8080/swagger-ui/index.html
@@ -51,22 +85,22 @@ OpenAPI JSON:
 http://localhost:8080/v3/api-docs
 ```
 
-## Security
+## Seguridad
 
-This service uses JWT Bearer tokens as a Resource Server.
+El servicio usa JWT Bearer tokens.
 
-Public endpoints:
-- GET /actuator/health
-- GET /v3/api-docs/**
-- GET /swagger-ui/**
+Endpoints publicos:
 
-Protected endpoints:
-- GET /employees, GET /employees/{id}, GET /employees/search require SCOPE_employee.read
-- POST /employees, PUT /employees/{id}, DELETE /employees/{id} require SCOPE_employee.write
+- GET `/actuator/health`
+- GET `/v3/api-docs/**`
+- GET `/swagger-ui/**`
 
-### Dev token endpoint
+Endpoints protegidos:
 
-When running with the `dev` profile, you can request a local token:
+- GET `/employees`, GET `/employees/{id}`, GET `/employees/search` requieren `SCOPE_employee.read`
+- POST `/employees`, PUT `/employees/{id}`, DELETE `/employees/{id}` requieren `SCOPE_employee.write`
+
+### Token local (solo perfil dev)
 
 ```bash
 curl -X POST http://localhost:8080/auth/token \
@@ -74,25 +108,16 @@ curl -X POST http://localhost:8080/auth/token \
   -d '{"subject":"local-user","scopes":["employee.read","employee.write"],"expiresInMinutes":60}'
 ```
 
-### Local JWT generation
-
-Local validation uses an HMAC secret configured by `JWT_SECRET` (defaults to `dev-local-secret-change-me`).
-
-Example token generation (HS256) using Python:
+### Ejemplo de uso con token
 
 ```bash
-python - <<'PY'
-import jwt
-import datetime
-
-secret = "dev-local-secret-change-me"
-now = datetime.datetime.utcnow()
-payload = {
-    "sub": "local-user",
-    "scope": "employee.read employee.write",
-    "iat": now,
-    "exp": now + datetime.timedelta(hours=1)
-}
-print(jwt.encode(payload, secret, algorithm="HS256"))
-PY
+TOKEN="<jwt>"
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/employees
 ```
+
+## CI/CD
+
+GitHub Actions:
+
+- CI: build + tests + dependency scanning.
+- CodeQL: analisis SAST semanal y en PRs.
