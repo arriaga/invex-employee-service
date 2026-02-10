@@ -63,6 +63,9 @@ public class EmployeeController {
   public ResponseEntity<List<EmployeeResponse>> createEmployees(
       @RequestBody JsonNode requestBody) {
     List<EmployeeCreateRequest> requests = parseCreateRequests(requestBody);
+    if (requests.isEmpty()) {
+      throw new IllegalArgumentException("Request body must contain at least one employee");
+    }
     validateCreateRequests(requests);
     List<Employee> employees = requests.stream()
         .map(EmployeeMapper::toEntity)

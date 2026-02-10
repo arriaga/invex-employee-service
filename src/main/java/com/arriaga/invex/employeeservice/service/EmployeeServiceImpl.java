@@ -1,9 +1,9 @@
 package com.arriaga.invex.employeeservice.service;
 
 import com.arriaga.invex.employeeservice.domain.Employee;
+import com.arriaga.invex.employeeservice.exception.EmployeeNotFoundException;
 import com.arriaga.invex.employeeservice.persistence.EmployeeRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   public Employee getById(Long id) {
     return repository.findById(id)
-        .orElseThrow(() -> new NoSuchElementException("Employee not found: " + id));
+        .orElseThrow(() -> new EmployeeNotFoundException(id));
   }
 
   @Override
