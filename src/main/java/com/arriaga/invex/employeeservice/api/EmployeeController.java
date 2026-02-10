@@ -34,6 +34,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -56,6 +58,7 @@ public class EmployeeController {
 
   @GetMapping
   @Operation(summary = "List employees", description = "Returns all employees")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Employees returned")
   })
@@ -67,6 +70,7 @@ public class EmployeeController {
 
   @GetMapping("/{id}")
   @Operation(summary = "Get employee by ID", description = "Returns an employee by ID")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Employee returned"),
       @ApiResponse(responseCode = "404", description = "Employee not found",
@@ -79,6 +83,7 @@ public class EmployeeController {
 
   @PostMapping
   @Operation(summary = "Create employees", description = "Accepts a single employee object or an array of employees")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "201", description = "Employees created"),
       @ApiResponse(responseCode = "400", description = "Invalid request"),
@@ -117,6 +122,7 @@ public class EmployeeController {
 
   @PutMapping("/{id}")
   @Operation(summary = "Update employee", description = "Updates provided employee fields")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Employee updated"),
       @ApiResponse(responseCode = "404", description = "Employee not found",
@@ -144,6 +150,7 @@ public class EmployeeController {
 
   @DeleteMapping("/{id}")
   @Operation(summary = "Delete employee", description = "Deletes an employee by ID")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "204", description = "Employee deleted"),
       @ApiResponse(responseCode = "404", description = "Employee not found",
@@ -156,6 +163,7 @@ public class EmployeeController {
 
   @GetMapping("/search")
   @Operation(summary = "Search employees", description = "Performs case-insensitive partial match across name fields")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Employees returned")
   })
