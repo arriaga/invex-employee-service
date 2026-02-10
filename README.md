@@ -121,3 +121,9 @@ GitHub Actions:
 
 - CI: build + tests + dependency scanning.
 - CodeQL: analisis SAST semanal y en PRs.
+
+## Evidencias
+
+### Gitflow
+
+![Gitflow](docs/images/gitflow.png)
