@@ -1,6 +1,12 @@
 package com.arriaga.invex.employeeservice.security;
 
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.SecurityContext;
+import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +22,28 @@ public class JwtConfig {
 
   @Bean
   public JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.secret-key}") String secret) {
-    SecretKeySpec key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+    SecretKeySpec key = new SecretKeySpec(secretBytes(secret), "HmacSHA256");
     return NimbusJwtDecoder.withSecretKey(key).build();
   }
 
   @Bean
   @Profile("dev")
   public JwtEncoder jwtEncoder(@Value("${spring.security.oauth2.resourceserver.jwt.secret-key}") String secret) {
-    return new NimbusJwtEncoder(new ImmutableSecret<>(secret.getBytes()));
+    SecretKey key = new SecretKeySpec(secretBytes(secret), "HmacSHA256");
+    OctetSequenceKey jwk = new OctetSequenceKey.Builder(key)
+        .algorithm(JWSAlgorithm.HS256)
+        .keyID("dev-token-key")
+        .build();
+    return new NimbusJwtEncoder(new ImmutableJWKSet<SecurityContext>(new JWKSet(jwk)));
+  }
+
+  private byte[] secretBytes(String secret) {
+    byte[] bytes = secret == null ? new byte[0] : secret.getBytes(StandardCharsets.UTF_8);
+    if (bytes.length < 32) {
+      throw new IllegalStateException(
+          "JWT secret must be at least 32 bytes for HS256. "
+              + "Set spring.security.oauth2.resourceserver.jwt.secret-key or JWT_SECRET.");
+    }
+    return bytes;
   }
 }

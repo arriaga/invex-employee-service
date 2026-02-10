@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
@@ -101,6 +105,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleException(
       Exception ex,
       HttpServletRequest request) {
+    log.error(
+        "Unhandled exception for {} {} corr={}",
+        request.getMethod(),
+        request.getRequestURI(),
+        MDC.get("correlationId"),
+        ex);
     ApiErrorResponse response = buildResponse(
         request,
         ErrorCode.INTERNAL_ERROR,
